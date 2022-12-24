@@ -2,6 +2,10 @@
 int main(){
    int a;
    Char b;
-   float c;
+   float c,e, product;
    double d;
-   Cout<<"data are"<< a\n<< b\n<< c\n<<d\n;}
+   Cout<<"data are"<< sizeof(a\n)<<sizeof( b\n)<< sizeof(c\n)<<sizeof(d\n);
+   Cin>>c>>e;
+   product=c*e;
+   cout<<product;
+   
