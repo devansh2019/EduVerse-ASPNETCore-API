@@ -66,7 +66,7 @@ namespace ExaminationSystem.Data
         public DbSet<CourseInstructor> CourseInstructors { get; set; }
         public DbSet<CourseStudent> CourseStudents { get; set; }
         public DbSet<Department> Departments { get; set; }
-        public DbSet<Exam> Exams { get; set; }
+        public DbSet<ExaminationSystem.Models.Exam> Exams { get; set; }
         public DbSet<ExamQuestion> ExamQuestions { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Question> Questions { get; set; }

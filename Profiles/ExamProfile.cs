@@ -12,15 +12,15 @@ namespace ExaminationSystem.Profiles
             CreateMap<ExamViewModel, ExamDTO>().ReverseMap();
             CreateMap<ExamCreateViewModel, ExamCreateDTO>().ReverseMap();
 
-            CreateMap<ExamDTO, Exam>().ReverseMap();
-            CreateMap<ExamCreateDTO, Exam>().ReverseMap();
+            CreateMap<ExamDTO, ExaminationSystem.Models.Exam>().ReverseMap();
+            CreateMap<ExamCreateDTO, ExaminationSystem.Models.Exam>().ReverseMap();
 
             CreateMap<ExamStudentCreateViewModel, ExamStudentCreateDTO>().ReverseMap();
             CreateMap<ExamStudentViewModel, ExamStudentDTO>().ReverseMap();
 
             CreateMap<ExamStudentCreateDTO, ExamStudent>();
-            CreateMap<ExamStudentDTO, ExamStudent>().ReverseMap(); // Added ReverseMap() here
-            CreateMap<ExamStudent, ExamStudentDTO>();  // Added this mapping
+            CreateMap<ExamStudentDTO, ExamStudent>().ReverseMap(); 
+            CreateMap<ExamStudent, ExamStudentDTO>(); 
             CreateMap<ExamStudentCreateDTO, ExamStudent>();
             CreateMap<ExamStudent, ExamStudentCreateDTO>();
             CreateMap<ExamAnswerDTO, ExamAnswer>().ReverseMap();

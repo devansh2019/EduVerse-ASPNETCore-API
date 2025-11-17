@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ExaminationSystem.Migrations
+namespace EduVerse.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20251115122154_newUpdate")]
-    partial class newUpdate
+    [Migration("20251116143843_intial")]
+    partial class intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

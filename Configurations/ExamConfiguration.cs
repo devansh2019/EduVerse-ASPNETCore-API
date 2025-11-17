@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExaminationSystem.Configurations
 {
-    public class ExamConfiguration : IEntityTypeConfiguration<Exam>
+    public class ExamConfiguration : IEntityTypeConfiguration<ExaminationSystem.Models.Exam>
     {
-        public void Configure(EntityTypeBuilder<Exam> builder)
+        public void Configure(EntityTypeBuilder<ExaminationSystem.Models.Exam> builder)
         {
             builder.Property(e => e.Name)
             .IsRequired()

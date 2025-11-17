@@ -8,10 +8,10 @@ namespace ExaminationSystem.Services.Exams
 {
     public class ExamService : IExamService
     {
-        private readonly IRepository<Exam> _examRepository;
+        private readonly IRepository<ExaminationSystem.Models.Exam> _examRepository;
         private readonly IExamQuestionService _examQuestionService;
 
-        public ExamService(IRepository<Exam> examRepository, IExamQuestionService examQuestionService)
+        public ExamService(IRepository<ExaminationSystem.Models.Exam> examRepository, IExamQuestionService examQuestionService)
         {
             _examRepository = examRepository;
             _examQuestionService = examQuestionService;
@@ -19,7 +19,7 @@ namespace ExaminationSystem.Services.Exams
 
         public async Task<int> Add(ExamCreateDTO examDTO)
         {
-            var exam = examDTO.MapOne<Exam>();
+            var exam = examDTO.MapOne<ExaminationSystem.Models.Exam>();
 
             exam = await _examRepository.AddAsync(exam);
             await _examRepository.SaveChangesAsync();
@@ -52,7 +52,7 @@ namespace ExaminationSystem.Services.Exams
 
         public async Task Update(ExamDTO examDTO)
         {
-            var exam = examDTO.MapOne<Exam>();
+            var exam = examDTO.MapOne<ExaminationSystem.Models.Exam>();
 
             if (exam != null)
             {

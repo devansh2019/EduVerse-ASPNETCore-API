@@ -1,9 +1,13 @@
 ﻿using ExaminationSystem.DTO.Accounts;
 using ExaminationSystem.Mediators.Accounts;
+using ExaminationSystem.Models;
 using ExaminationSystem.Services.Accounts;
 using ExaminationSystem.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace ExaminationSystem.Controllers
 {
@@ -12,10 +16,11 @@ namespace ExaminationSystem.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAuthMediator _authMediator;
-
-        public AccountController(IAuthMediator authMediator )
+        private readonly UserManager<User> _userManager;
+        public AccountController(IAuthMediator authMediator  , UserManager<User> usermanager )
         {
             _authMediator = authMediator;
+            _userManager = usermanager;
         }
 
         [HttpPost]
@@ -64,6 +69,24 @@ namespace ExaminationSystem.Controllers
             };
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string email, string code)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = _userManager.FindByEmailAsync(email).Result;
+                if (user != null)
+                {
+                    var decodedCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+                    var result = await _userManager.ConfirmEmailAsync(user, decodedCode);
+                    if (result.Succeeded)
+                    {
+                        return Ok();
+                    }
+                }
+            }
+            return BadRequest("Error confirming your email.");
+        }
         private void SetRefreshTokenInCookie(string refreshToken, DateTime expiration)
         {
             var cookieOptions = new CookieOptions

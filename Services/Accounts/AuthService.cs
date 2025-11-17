@@ -1,10 +1,14 @@
-﻿using ExaminationSystem.DTO.Accounts;
+﻿using Azure.Core;
+using Exam.Service;
+using ExaminationSystem.DTO.Accounts;
 using ExaminationSystem.Helpers;
 using ExaminationSystem.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -18,50 +22,71 @@ namespace ExaminationSystem.Services.Accounts
         private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _contextAccessor;
+
         public AuthService(
             UserManager<User> userManager, 
             RoleManager<IdentityRole<int>> roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHttpContextAccessor contextaccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _contextAccessor = contextaccessor;
         }
 
         public async Task<AuthResponseDTO> Login(LoginRequestDTO loginDTO)
         {
-            var authResponse = new AuthResponseDTO();
-
             var user = await _userManager.FindByEmailAsync(loginDTO.Email);
 
             if (user is null || !await _userManager.CheckPasswordAsync(user, loginDTO.Password))
             {
-                authResponse.Message = "Email or Password is incorrect";
-                return authResponse;
+                return new AuthResponseDTO() 
+                { 
+                    Message = "Email or Password is incorrect!" 
+                };
+            }
+
+            // Check if email is confirmed
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return new AuthResponseDTO()
+                {
+                    Message = "Email is not confirmed. Please check your email."
+                };
             }
 
             var token = await CreatJwtToken(user);
-            var roles = await _userManager.GetRolesAsync(user);
+            var refreshToken = GenerateRefreshToken();
 
-            authResponse.IsAuthenticated = true;
-            authResponse.Roles = roles.ToList();
-            authResponse.Token = new JwtSecurityTokenHandler().WriteToken(token);
-            authResponse.ExpiresOn = token.ValidTo;
-
-            if (user.RefreshTokens.Any(r => !r.IsDeleted))
+            if (user.RefreshTokens.Any(t => t.IsActive))
             {
-                var activeRefershToken = user.RefreshTokens.SingleOrDefault(r => !r.IsDeleted);
-                authResponse.RefreshToken = activeRefershToken.Token;
-                authResponse.RefreshTokenExpiration = activeRefershToken.ExpiredOn;
-            }
-            else
-            {
-                var refreshToken = GenerateRefreshToken();
-                authResponse.RefreshToken = refreshToken.Token;
-                authResponse.RefreshTokenExpiration = refreshToken.ExpiredOn;
+                var activeRefreshToken = user.RefreshTokens.FirstOrDefault(t => t.IsActive);
+                return new AuthResponseDTO
+                {
+                    IsAuthenticated = true,
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    ExpiresOn = token.ValidTo,
+                    Message = "Login Successed",
+                    Roles = (await _userManager.GetRolesAsync(user)).ToList(),
+                    RefreshToken = activeRefreshToken.Token,
+                    RefreshTokenExpiration = activeRefreshToken.ExpiredOn
+                };
             }
 
-            return authResponse;
+            user.RefreshTokens.Add(refreshToken);
+            await _userManager.UpdateAsync(user);
+
+            return new AuthResponseDTO
+            {
+                IsAuthenticated = true,
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                ExpiresOn = token.ValidTo,
+                Message = "Login Successed",
+                Roles = (await _userManager.GetRolesAsync(user)).ToList(),
+                RefreshToken = refreshToken.Token,
+                RefreshTokenExpiration = refreshToken.ExpiredOn
+            };
         }
 
         public async Task<AuthResponseDTO> Register(RegisterRequestDTO registerDTO)
@@ -70,7 +95,7 @@ namespace ExaminationSystem.Services.Accounts
             {
                 return new AuthResponseDTO()
                 {
-                    Message = "Username is alerady registered!"
+                    Message = "Username is already registered!"
                 };
             }
 
@@ -83,7 +108,8 @@ namespace ExaminationSystem.Services.Accounts
             }
 
             var user = registerDTO.MapOne<User>();
-
+            
+            // Create user FIRST
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
 
             if (!result.Succeeded)
@@ -99,28 +125,29 @@ namespace ExaminationSystem.Services.Accounts
                 };
             }
 
+            // Assign role
             if (registerDTO.Type == "Instructor")
                 await _userManager.AddToRoleAsync(user, "Instructor");
             else if (registerDTO.Type == "Student")
                 await _userManager.AddToRoleAsync(user, "Student");
 
-            var token = await CreatJwtToken(user);
+            // Generate confirmation token and send email
+            var scheme = _contextAccessor.HttpContext.Request.Scheme;
+            var host = _contextAccessor.HttpContext.Request.Host.Value;
 
-            var refreshToken = GenerateRefreshToken();
-            user.RefreshTokens.Add(refreshToken);
-            await _userManager.UpdateAsync(user);
+            var tokenConfirmation = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(tokenConfirmation));
+            var confirmationLink = $"{scheme}://{host}/account/ConfirmEmail?email={user.Email}&code={code}";
 
+            EmailService emailService = new EmailService(_configuration);
+            await emailService.Execute(user.Email, confirmationLink);
+
+            // Return success WITHOUT authentication tokens
             return new AuthResponseDTO
             {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                ExpiresOn = token.ValidTo,
-                IsAuthenticated = true,
-                Message = "Registration Successed",
-                Roles = new List<string>() { "User" },
-                RefreshToken = refreshToken.Token,
-                RefreshTokenExpiration = refreshToken.ExpiredOn
+                IsAuthenticated = false,
+                Message = "Registration successful. Please check your email to confirm your account."
             };
-
         }
 
         private async Task<JwtSecurityToken> CreatJwtToken(User user)

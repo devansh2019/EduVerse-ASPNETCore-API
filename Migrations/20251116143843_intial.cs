@@ -3,31 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ExaminationSystem.Migrations
+namespace EduVerse.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class intial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Addresses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Street = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    HouseNumber = table.Column<int>(type: "int", nullable: false),
-                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Addresses", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Departments",
                 columns: table => new
@@ -87,7 +70,7 @@ namespace ExaminationSystem.Migrations
                     CreditHours = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DepartmentID = table.Column<int>(type: "int", nullable: true),
+                    DepartmentID = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -111,8 +94,11 @@ namespace ExaminationSystem.Migrations
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AddressID = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Embeddings = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserType = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
                     HireDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DepartmentID = table.Column<int>(type: "int", nullable: true),
@@ -137,12 +123,6 @@ namespace ExaminationSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_Addresses_AddressID",
-                        column: x => x.AddressID,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Users_Departments_DepartmentID",
                         column: x => x.DepartmentID,
@@ -228,6 +208,36 @@ namespace ExaminationSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CourseReviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseID = table.Column<int>(type: "int", nullable: false),
+                    StudentID = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseReviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CourseReviews_Courses_CourseID",
+                        column: x => x.CourseID,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CourseReviews_Users_StudentID",
+                        column: x => x.StudentID,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CourseStudents",
                 columns: table => new
                 {
@@ -266,6 +276,7 @@ namespace ExaminationSystem.Migrations
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalQuestions = table.Column<int>(type: "int", nullable: false),
                     TotalPoints = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     CourseID = table.Column<int>(type: "int", nullable: false),
                     InstructorID = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -305,6 +316,37 @@ namespace ExaminationSystem.Migrations
                     table.ForeignKey(
                         name: "FK_RefreshToken_Users_UserId",
                         column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TimeLineItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseID = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", maxLength: 50, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TimeLineItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TimeLineItems_Courses_CourseID",
+                        column: x => x.CourseID,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TimeLineItems_Users_UserID",
+                        column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -422,10 +464,270 @@ namespace ExaminationSystem.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ExamStudent",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    ExamId = table.Column<int>(type: "int", nullable: false),
+                    SubmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsSubmitted = table.Column<bool>(type: "bit", nullable: false),
+                    Score = table.Column<double>(type: "float", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExamStudent", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExamStudent_Exams_ExamId",
+                        column: x => x.ExamId,
+                        principalTable: "Exams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ExamStudent_Users_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Assignments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TimeLineItemID = table.Column<int>(type: "int", nullable: false),
+                    Deadline = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Assignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Assignments_TimeLineItems_TimeLineItemID",
+                        column: x => x.TimeLineItemID,
+                        principalTable: "TimeLineItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TimeLineItemID = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    CommentedByID = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_TimeLineItems_TimeLineItemID",
+                        column: x => x.TimeLineItemID,
+                        principalTable: "TimeLineItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Comments_Users_CommentedByID",
+                        column: x => x.CommentedByID,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TimeLineItemID = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_TimeLineItems_TimeLineItemID",
+                        column: x => x.TimeLineItemID,
+                        principalTable: "TimeLineItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExamAnswer",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExamStudentId = table.Column<int>(type: "int", nullable: false),
+                    ExamQuestionId = table.Column<int>(type: "int", nullable: false),
+                    ChoiceId = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExamAnswer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExamAnswer_Choices_ChoiceId",
+                        column: x => x.ChoiceId,
+                        principalTable: "Choices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ExamAnswer_ExamQuestions_ExamQuestionId",
+                        column: x => x.ExamQuestionId,
+                        principalTable: "ExamQuestions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ExamAnswer_ExamStudent_ExamStudentId",
+                        column: x => x.ExamStudentId,
+                        principalTable: "ExamStudent",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AssignmentAllowedExtensions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AssignmentID = table.Column<int>(type: "int", nullable: false),
+                    Extension = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssignmentAllowedExtensions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AssignmentAllowedExtensions_Assignments_AssignmentID",
+                        column: x => x.AssignmentID,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AssignmentSubmissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AssignmentID = table.Column<int>(type: "int", nullable: false),
+                    StudentID = table.Column<int>(type: "int", nullable: false),
+                    SubmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Grade = table.Column<int>(type: "int", nullable: false),
+                    Feedback = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssignmentSubmissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AssignmentSubmissions_Assignments_AssignmentID",
+                        column: x => x.AssignmentID,
+                        principalTable: "Assignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AssignmentSubmissions_Users_StudentID",
+                        column: x => x.StudentID,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Attachments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    FileType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    FileSize = table.Column<long>(type: "bigint", nullable: false),
+                    UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeLineItemID = table.Column<int>(type: "int", nullable: true),
+                    AssignmentSubmissionID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attachments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attachments_AssignmentSubmissions_AssignmentSubmissionID",
+                        column: x => x.AssignmentSubmissionID,
+                        principalTable: "AssignmentSubmissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Attachments_TimeLineItems_TimeLineItemID",
+                        column: x => x.TimeLineItemID,
+                        principalTable: "TimeLineItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssignmentAllowedExtensions_AssignmentID",
+                table: "AssignmentAllowedExtensions",
+                column: "AssignmentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Assignments_TimeLineItemID",
+                table: "Assignments",
+                column: "TimeLineItemID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssignmentSubmissions_AssignmentID",
+                table: "AssignmentSubmissions",
+                column: "AssignmentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssignmentSubmissions_StudentID",
+                table: "AssignmentSubmissions",
+                column: "StudentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attachments_AssignmentSubmissionID",
+                table: "Attachments",
+                column: "AssignmentSubmissionID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attachments_TimeLineItemID",
+                table: "Attachments",
+                column: "TimeLineItemID");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Choices_QuestionID",
                 table: "Choices",
                 column: "QuestionID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_CommentedByID",
+                table: "Comments",
+                column: "CommentedByID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_TimeLineItemID",
+                table: "Comments",
+                column: "TimeLineItemID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseInstructors_CourseID",
@@ -436,6 +738,17 @@ namespace ExaminationSystem.Migrations
                 name: "IX_CourseInstructors_InstructorID",
                 table: "CourseInstructors",
                 column: "InstructorID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseReviews_CourseID_StudentID",
+                table: "CourseReviews",
+                columns: new[] { "CourseID", "StudentID" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseReviews_StudentID",
+                table: "CourseReviews",
+                column: "StudentID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_DepartmentID",
@@ -451,6 +764,21 @@ namespace ExaminationSystem.Migrations
                 name: "IX_CourseStudents_StudentID",
                 table: "CourseStudents",
                 column: "StudentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamAnswer_ChoiceId",
+                table: "ExamAnswer",
+                column: "ChoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamAnswer_ExamQuestionId",
+                table: "ExamAnswer",
+                column: "ExamQuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamAnswer_ExamStudentId",
+                table: "ExamAnswer",
+                column: "ExamStudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExamQuestions_ExamID",
@@ -473,6 +801,22 @@ namespace ExaminationSystem.Migrations
                 column: "InstructorID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExamStudent_ExamId",
+                table: "ExamStudent",
+                column: "ExamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamStudent_StudentId",
+                table: "ExamStudent",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_TimeLineItemID",
+                table: "Posts",
+                column: "TimeLineItemID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
@@ -483,6 +827,16 @@ namespace ExaminationSystem.Migrations
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeLineItems_CourseID",
+                table: "TimeLineItems",
+                column: "CourseID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeLineItems_UserID",
+                table: "TimeLineItems",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
@@ -503,11 +857,6 @@ namespace ExaminationSystem.Migrations
                 name: "EmailIndex",
                 table: "Users",
                 column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_AddressID",
-                table: "Users",
-                column: "AddressID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_DepartmentID",
@@ -531,16 +880,28 @@ namespace ExaminationSystem.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Choices");
+                name: "AssignmentAllowedExtensions");
+
+            migrationBuilder.DropTable(
+                name: "Attachments");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "CourseInstructors");
 
             migrationBuilder.DropTable(
+                name: "CourseReviews");
+
+            migrationBuilder.DropTable(
                 name: "CourseStudents");
 
             migrationBuilder.DropTable(
-                name: "ExamQuestions");
+                name: "ExamAnswer");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "RefreshToken");
@@ -561,22 +922,37 @@ namespace ExaminationSystem.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "Exams");
+                name: "AssignmentSubmissions");
+
+            migrationBuilder.DropTable(
+                name: "Choices");
+
+            migrationBuilder.DropTable(
+                name: "ExamQuestions");
+
+            migrationBuilder.DropTable(
+                name: "ExamStudent");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Assignments");
 
             migrationBuilder.DropTable(
                 name: "Questions");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Exams");
+
+            migrationBuilder.DropTable(
+                name: "TimeLineItems");
 
             migrationBuilder.DropTable(
                 name: "Courses");
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Addresses");
 
             migrationBuilder.DropTable(
                 name: "Departments");

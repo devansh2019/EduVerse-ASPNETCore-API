@@ -13,5 +13,7 @@ namespace ExaminationSystem.DTO.Accounts
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public string Type { get; set; }
+        public string? Embeddings { get; set; }
+        public string? ImageURL { get; set; }
     }
 }

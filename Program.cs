@@ -34,8 +34,10 @@ namespace ExaminationSystem
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<CurrentUserService>();
 
-            builder.Services.AddIdentity<User, IdentityRole<int>>()
-            .AddEntityFrameworkStores<Context>();
+            builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+                 options.SignIn.RequireConfirmedEmail = true)
+            .AddEntityFrameworkStores<Context>()
+            .AddDefaultTokenProviders();
 
             builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 
